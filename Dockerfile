@@ -1,6 +1,5 @@
 FROM golang:1.16 as builder
 
-# modules
 WORKDIR $GOPATH/src/github.com/shanehowearth/argyle
 ADD . $GOPATH/src/github.com/shanehowearth/argyle
 
