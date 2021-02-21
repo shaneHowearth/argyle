@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fibonacci
+  labels:
+    app: fibonacci
+spec:
+  containers:
+  - name: fibonacci
+    image: fibonacci
+    imagePullPolicy: Never
+    ports:
+    - name: fibonacci-port
+      containerPort: 8000
+      hostPort: 8000
+    env:
+    - name: PORT_NUM
+      value: "8000"
+    livenessProbe:
+      httpGet:
+        path: /fib?n=3
+        port: fibonacci-port
+      failureThreshold: 1
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /fib?n=3
+        port: fibonacci-port
+      initialDelaySeconds: 5
+      periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibonacci
+  labels:
+    app: fibonacci
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fibonacci
+  template:
+    metadata:
+      labels:
+        app: fibonacci
+    spec:
+      containers:
+      - name: fibonacci
+        image: fibonacci
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PORT_NUM
+          value: "8000"
